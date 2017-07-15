@@ -1,0 +1,25 @@
+version: '2'
+services:
+  portfolio:
+    build: .
+    image: mortonprod/portfolionodebackend
+    restart: unless-stopped
+    volumes:
+      - ./server.js:/usr/src/app/server.js
+      - ./client/build:/usr/src/app/client/build
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+  db: 
+    image: mongo:latest
+    restart: unless-stopped
+    volumes:
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./db:/data/db
+    ports:
+      - 27017
+
