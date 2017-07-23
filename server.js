@@ -5,8 +5,13 @@ const fs = require('fs');
 const MongoClient = require('mongodb').MongoClient;
 const stringToObject = require('mongodb').ObjectID
 const mongoStoreFactory = require("connect-mongo");
+const compression = require('compression')
+
 
 var app = express();
+//Compress here since we do not want to change the build tools. 
+//This will use a bit more CPU as it needs to compress each request and response.
+app.use(compression())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set("port", process.env.PORT || 3001);
