@@ -33,6 +33,18 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
 	app.get('/', function (req, res) {
 	    res.sendFile(path.join(__dirname+'/client/build/index.html'));
 	});
+	app.get('/about', function (req, res) {
+	    res.sendFile(path.join(__dirname+'/client/build/about.html'));
+	});
+	app.get('/services', function (req, res) {
+	    res.sendFile(path.join(__dirname+'/client/build/services.html'));
+	});
+	app.get('/work', function (req, res) {
+	    res.sendFile(path.join(__dirname+'/client/build/work.html'));
+	});
+	app.get('/skills', function (req, res) {
+	    res.sendFile(path.join(__dirname+'/client/build/skills.html'));
+	});
 
 	app.listen(app.get("port"), () => {});
 
