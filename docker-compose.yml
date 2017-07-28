@@ -7,6 +7,7 @@ services:
     volumes:
       - ./server.js:/usr/src/app/server.js
       - ./client/build:/usr/src/app/client/build
+      - ./client/documentation:/usr/src/app/client/documentation
     depends_on:
       - db
     ports:
