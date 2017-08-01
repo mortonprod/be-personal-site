@@ -7,6 +7,7 @@ const stringToObject = require('mongodb').ObjectID
 const mongoStoreFactory = require("connect-mongo");
 const compression = require('compression');
 const helmet = require('helmet');
+const nodemailer = require('nodemailer');
 const url = require('url');
 
 
@@ -38,6 +39,7 @@ app.use("/", express.static("client/build"));
 var accountsCollection = null; 
 /**
     We don't need to specify index since this will be served automatically with static files. 
+		However we need the other routes since the url /skills is not skills.html.
 */
 MongoClient.connect("mongodb://db:27017", function(err, db) {
   if(!err) {
@@ -49,11 +51,50 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
 
         }
     });
-	app.listen(app.get("port"), () => {});
-
+    app.get('/', function (req, res) {
+        console.log("Get index!");
+        res.sendFile(path.join(__dirname+'/client/build/index.html'));
+    });
+    app.get('/about', function (req, res) {
+        console.log("Get about!");
+        res.sendFile(path.join(__dirname+'/client/build/about.html'));
+    });
+    app.get('/services', function (req, res) {
+        console.log("Get services!");
+        res.sendFile(path.join(__dirname+'/client/build/services.html'));
+    });
+    app.get('/work', function (req, res) {
+        res.sendFile(path.join(__dirname+'/client/build/work.html'));
+    });
+    app.get('/skills', function (req, res) {
+        res.sendFile(path.join(__dirname+'/client/build/skills.html'));
+    });
+    app.get('/contact', function (req, res) {
+        res.sendFile(path.join(__dirname+'/client/build/contact.html'));
+    });
+		app.listen(app.get("port"), () => {});
   }
-});
 
+
+
+    app.post('/contact', function (req, res) {
+        console.log("Contact information " + req.body.name + "   " + req.body.email + "   " + req.body.message);
+        var transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+            user: "",
+            pass: ""
+        }
+    });
+
+        transporter.sendMail({
+		   from: req.body.email,
+		   to: 'atticusfbf@gmail.com',
+		   subject: 'Interest in portfolio from ' + req.body.name ,
+		   text: req.body.message
+        });
+    });
+});
 
 
 
