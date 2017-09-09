@@ -29,9 +29,6 @@ console.log("Port: " + process.env.PORT + " mode:  " + process.env.NODE_ENV);
     url in src/href prepended with __documentation/frontend ... 
 */
 app.use("/__documentation/frontend", express.static("client/documentation"));
-/**
-    Don't need to serve index.html about.html since specifying static files will be enough
-*/
 app.use("/", express.static("client/build"));
 
 
@@ -71,6 +68,9 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
     });
     app.get('/contact', function (req, res) {
         res.sendFile(path.join(__dirname+'/client/build/contact.html'));
+    });
+    app.get('/__cv', function (req, res) {
+        res.sendFile(path.join(__dirname+'/client/build/Twenty-Seconds_cv.pdf'));
     });
 		app.listen(app.get("port"), () => {});
   }
