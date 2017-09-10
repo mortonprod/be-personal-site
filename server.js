@@ -9,6 +9,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 const nodemailer = require('nodemailer');
 const url = require('url');
+const keys = require('./keys/keys')
 
 
 var app = express();
@@ -76,21 +77,23 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
   }
 
 
-
+    /**
+      Need to send contact form information to a good email account. This email account will then send it to the email you want to get the email.
+    */
     app.post('/contact', function (req, res) {
         console.log("Contact information " + req.body.name + "   " + req.body.email + "   " + req.body.message);
         var transporter = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-            user: "",
-            pass: ""
-        }
-    });
+            service: "Gmail",
+            auth: {
+                user: keys.email.username,
+                pass: keys.email.password
+            }
+        });
 
         transporter.sendMail({
 		   from: req.body.email,
-		   to: 'atticusfbf@gmail.com',
-		   subject: 'Interest in portfolio from ' + req.body.name ,
+		   to: 'alex@alexandermorton.co.uk',
+		   subject: 'Interest in portfolio from ' + req.body.name + ". Email: " + req.body.email ,
 		   text: req.body.message
         });
     });

@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./server.js:/usr/src/app/server.js
+      - ./keys/keys.js:/usr/src/app/keys/keys.js
       - ./client/build:/usr/src/app/client/build
       - ./client/documentation:/usr/src/app/client/documentation
     depends_on:
