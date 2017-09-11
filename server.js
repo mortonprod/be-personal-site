@@ -65,6 +65,7 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
         res.sendFile(path.join(__dirname+'/client/build/work.html'));
     });
     app.get('/skills', function (req, res) {
+        console.log("Skills route requested");
         res.sendFile(path.join(__dirname+'/client/build/skills.html'));
     });
     app.get('/contact', function (req, res) {
@@ -72,6 +73,14 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
     });
     app.get('/__cv', function (req, res) {
         res.sendFile(path.join(__dirname+'/client/build/Twenty-Seconds_cv.pdf'));
+    });
+    app.get('/robot.txt', function (req, res) {
+        console.log("Get index!");
+        res.sendFile(path.join(__dirname+'/client/robot.txt'));
+    });
+    app.get('/sitemap.xml', function (req, res) {
+        console.log("Get index!");
+        res.sendFile(path.join(__dirname+'/client/sitemap.xml'));
     });
 		app.listen(app.get("port"), () => {});
   }
