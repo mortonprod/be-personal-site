@@ -1,21 +1,20 @@
-#FROM node:boron
+#Get an exact version for compatibility issues.
 FROM node:8.1.3
 
+#Set environmental variables.
 ENV HOME=/usr/src/app
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 ENV PORT=3000
-EXPOSE 3000
+
+#Expose port to let the user of the image know which port to use. 
+EXPOSE $PORT
+
+#Build working directory.
 RUN mkdir -p $HOME
-
 COPY package.json npm-shrinkwrap.json $HOME/
-
-#Set working directory and users for commands run in process after this point in dockerfile 
 WORKDIR $HOME
-#USER alexandermorton
 RUN npm install  
-#npm cache clean
-#Move this to after install so cache used for layers before this.
-#COPY ./server.js  $HOME/server.js
 
+
+USER node
 CMD ["node","server.js"]
-#ENTRYPOINT ["node","server.js"]
