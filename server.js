@@ -21,7 +21,7 @@ app.use(compression())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set("port", process.env.PORT || 3001);
-console.log("Port: " + process.env.PORT + " mode:  " + process.env.NODE_ENV);
+console.log("Port: " + process.env.PORT + " Mode:  " + process.env.NODE_ENV);
 
 
 /**
@@ -41,7 +41,7 @@ var accountsCollection = null;
 */
 MongoClient.connect("mongodb://db:27017", function(err, db) {
   if(!err) {
-    console.log("We are connected");
+    console.log("We are connected to the database");
     db.collection('accounts', function(err, collection) {
         if(!err){
             console.log("Accessed account collection");
@@ -50,22 +50,18 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
         }
     });
     app.get('/', function (req, res) {
-        console.log("Get index!");
         res.sendFile(path.join(__dirname+'/client/build/index.html'));
     });
     app.get('/about', function (req, res) {
-        console.log("Get about!");
         res.sendFile(path.join(__dirname+'/client/build/about.html'));
     });
     app.get('/services', function (req, res) {
-        console.log("Get services!");
         res.sendFile(path.join(__dirname+'/client/build/services.html'));
     });
     app.get('/work', function (req, res) {
         res.sendFile(path.join(__dirname+'/client/build/work.html'));
     });
     app.get('/skills', function (req, res) {
-        console.log("Skills route requested");
         res.sendFile(path.join(__dirname+'/client/build/skills.html'));
     });
     app.get('/contact', function (req, res) {
@@ -75,11 +71,9 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
         res.sendFile(path.join(__dirname+'/client/build/Twenty-Seconds_cv.pdf'));
     });
     app.get('/robot.txt', function (req, res) {
-        console.log("Get index!");
         res.sendFile(path.join(__dirname+'/client/robot.txt'));
     });
     app.get('/sitemap.xml', function (req, res) {
-        console.log("Get index!");
         res.sendFile(path.join(__dirname+'/client/sitemap.xml'));
     });
 		app.listen(app.get("port"), () => {});
@@ -90,7 +84,6 @@ MongoClient.connect("mongodb://db:27017", function(err, db) {
       Need to send contact form information to a good email account. This email account will then send it to the email you want to get the email.
     */
     app.post('/contact', function (req, res) {
-        console.log("Contact information " + req.body.name + "   " + req.body.email + "   " + req.body.message);
         var transporter = nodemailer.createTransport({
             service: "Gmail",
             auth: {
