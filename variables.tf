@@ -1,5 +1,5 @@
 variable "name" {
-  default = "wgl-site"
+  default = "maxwell-demon"
 }
 variable "aws_region" {
   default = "us-east-1"
@@ -7,7 +7,7 @@ variable "aws_region" {
 
 variable "domain_names" {
   description = "Only supports sub domain changes"
-  default = ["www.alex-test-site.co.uk", "test.alex-test-site.co.uk"]
+  default = ["www.maxwells-demon.com", "maxwells-demon.com"]
 }
 
 variable "asset_folder" {
