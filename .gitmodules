@@ -1,6 +1,8 @@
 [submodule "modules/fe-personal-site"]
 	path = modules/fe-personal-site
 	url = https://github.com/mortonprod/fe-personal-site
+	ignore = untracked
 [submodule "modules/cloudfrontEdge-s3-module"]
 	path = modules/cloudfrontEdge-s3-module
 	url = https://github.com/mortonprod/cloudfrontEdge-s3-module
+	ignore = untracked
