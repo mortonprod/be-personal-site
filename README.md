@@ -3,3 +3,5 @@ git submodule add ssh://mortonprod@github.com/mortonprod/fe-personal-site module
 git submodule update --init
 git submodule update --recursive --remote
 terraform get --update=true
+
+Will alway break on deletion since lambda needs time for cloud front to fully stop for it to work
