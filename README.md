@@ -8,3 +8,7 @@ Will alway break on deletion since lambda needs time for cloud front to fully st
 
 terraform plan -var-file="variables.tfvar" --auto-approve
 terraform apply -var-file="variables.tfvar" --auto-approve
+
+# Issue
+
+Fix domain name acm setting issue: Always select first domain

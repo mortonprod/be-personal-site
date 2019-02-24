@@ -113,7 +113,7 @@ resource "aws_api_gateway_rest_api" "api_gateway_rest_api" {
 resource "aws_api_gateway_resource" "api_gateway_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   parent_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.root_resource_id}"
-  path_part   = "ses"
+  path_part   = "contact"
 }
 
 resource "aws_api_gateway_method" "api_gateway_method" {
@@ -140,6 +140,52 @@ resource "aws_api_gateway_integration" "api_gateway_integration" {
 
   # request_templates = { "application/json" = "${var.integration_request_template}" }
 }
+
+resource "aws_api_gateway_deployment" "example" {
+  # See aws_api_gateway_rest_api docs for how to create this
+  rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+  stage_name  = "prod"
+}
+
+data "aws_acm_certificate" "acm_certificate" {
+  # count = "${length(var.domain_names)}"
+  # provider = "aws.us-east-1"
+
+  domain   = "${element(split(".", var.domain_names[0]),0) != "" ? replace(var.domain_names[0],"${element(split(".", var.domain_names[0]),0)}.", "") : replace(var.domain_names[0], "/(^)[.]/", "")}"
+  statuses = ["ISSUED"]
+}
+
+resource "aws_api_gateway_domain_name" "example" {
+  certificate_arn = "${data.aws_acm_certificate.acm_certificate.arn}"
+  domain_name     = "ses.${element(split(".", var.domain_names[0]),0) != "" ? replace(var.domain_names[0],"${element(split(".", var.domain_names[0]),0)}.", "") : replace(var.domain_names[0], "/(^)[.]/", "")}"
+}
+
+resource "aws_api_gateway_base_path_mapping" "test" {
+  api_id      = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+  stage_name  = "${aws_api_gateway_deployment.example.stage_name}"
+  domain_name = "${aws_api_gateway_domain_name.example.domain_name}"
+}
+
+data "aws_route53_zone" "route53_zone" {
+  # count = "${length(var.domain_names)}"
+  name = "${element(split(".", var.domain_names[0]),0) != "" ? replace(var.domain_names[0],"${element(split(".", var.domain_names[0]),0)}.", "") : replace(var.domain_names[0], "/(^)[.]/", "")}"
+}
+
+# Example DNS record using Route53.
+# Route53 is not specifically required; any DNS host can be used.
+resource "aws_route53_record" "example" {
+  name    = "${aws_api_gateway_domain_name.example.domain_name}"
+  type    = "A"
+  zone_id = "${data.aws_route53_zone.route53_zone.id}"
+
+  alias {
+    evaluate_target_health = true
+    name                   = "${aws_api_gateway_domain_name.example.cloudfront_domain_name}"
+    zone_id                = "${aws_api_gateway_domain_name.example.cloudfront_zone_id}"
+  }
+}
+
+
 
 # resource "aws_api_gateway_integration_response" "api_gateway_integration_response_200" {
 #   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
