@@ -11,6 +11,9 @@ terraform apply -var-file="variables.tfvar" --auto-approve
 
 # Issue
 Must verify email first.
+Fix inline css issue
+Fix cross browser.
+SES only works for api requests not from domain.
 Fix domain name acm setting issue: Always select first domain
 
 
