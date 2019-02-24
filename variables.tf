@@ -15,50 +15,52 @@ variable "asset_folder" {
   default = "./modules/fe-personal-site/dist"
 }
 
+variable "account_id" {
+  description = "Account id"
+}
 
 ///SES
 
 
-# variable "lambda_name" {}
+variable "lambda_name" {
+  description = "The name to give to ses lambda"
+  default = "ses"
+}
 
 
 
-# variable "account_id" {}
+variable "integration_request_template" {
+  default = "{}"
+}
 
-# variable "region" {}
-
-# variable "integration_request_template" {
-#   default = "{}"
-# }
-
-# variable "integration_response_template" {
-#   default = "#set($inputRoot = $input.path('$')){}"
-# }
+variable "integration_response_template" {
+  default = "#set($inputRoot = $input.path('$')){}"
+}
 
 
-# variable "request_parameters" {
-#   default = {}
-# }
+variable "request_parameters" {
+  default = {}
+}
 
 
-# variable "request_model" {
-#   default = "Empty"
-# }
+variable "request_model" {
+  default = "Empty"
+}
 
 
-# variable "response_model" {
-#   default = "Empty"
-# }
+variable "response_model" {
+  default = "Empty"
+}
 
 
-# variable "integration_error_template" {
-#   default = <<EOF
-# #set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')) {
-#   "message" : "$errorMessageObj.message"
-# }
-# EOF
-# }
+variable "integration_error_template" {
+  default = <<EOF
+#set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')) {
+  "message" : "$errorMessageObj.message"
+}
+EOF
+}
 
-# variable "authorization" {
-#   default = "NONE"
-# }
+variable "authorization" {
+  default = "NONE"
+}
