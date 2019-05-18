@@ -192,6 +192,11 @@ resource "aws_api_gateway_deployment" "example" {
   # See aws_api_gateway_rest_api docs for how to create this
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   stage_name  = "prod"
+  # TODO: NEED TO GET ALL THE RIGHT VARIABLES WHICH WE REDEPLOY ON CHANGE.
+  # This is needed since terraform will not redeploy after changes to resources and integrations
+  # variables = {
+  #   trigger = "${replace(base64sha256("${jsonencode(var.apigw_module_methods_to_apps_lambda)}${jsonencode(var.global_apigw_apps_ecs)}${jsonencode(var.apigw_module_apps_to_route_auth)}${jsonencode(var.apigw_module_methods_to_apps_ecs)}${jsonencode(var.apigw_module_apps_to_route_api_key_required)}${jsonencode(var.global_apigw_apps_ecs)}${jsonencode(var.global_apigw_apps_lambda)}${jsonencode(module.apigw_module.id)}${jsonencode(module.apigw_module.app_to_resource_ids)}${jsonencode(var.apigw_module_methods_to_apps_lambda)}${jsonencode(var.apigw_module_methods_to_apps_ecs)}"), "+","")}"
+  # }
 }
 
 data "aws_acm_certificate" "acm_certificate" {
