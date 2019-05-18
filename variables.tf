@@ -15,9 +15,9 @@ variable "asset_folder" {
   default = "./modules/fe-personal-site/dist"
 }
 
-variable "account_id" {
-  description = "Account id"
-}
+# variable "account_id" {
+#   description = "Account id"
+# }
 
 ///SES
 
@@ -30,7 +30,7 @@ variable "lambda_name" {
 
 
 variable "integration_request_template" {
-  default = "{}"
+  default = "{\"statusCode\": 200}"
 }
 
 variable "integration_response_template" {

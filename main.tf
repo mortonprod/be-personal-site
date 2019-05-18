@@ -113,8 +113,10 @@ resource "aws_api_gateway_rest_api" "api_gateway_rest_api" {
 resource "aws_api_gateway_resource" "api_gateway_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   parent_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.root_resource_id}"
-  path_part   = "contact"
+  path_part   = "ses"
 }
+
+/// POST
 
 resource "aws_api_gateway_method" "api_gateway_method" {
   rest_api_id        = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
@@ -138,7 +140,52 @@ resource "aws_api_gateway_integration" "api_gateway_integration" {
 
   integration_http_method = "POST"
 
-  # request_templates = { "application/json" = "${var.integration_request_template}" }
+}
+
+/// OPTIONS
+
+
+resource "aws_api_gateway_method" "options_method" {
+    rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+    resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
+    http_method   = "OPTIONS"
+    authorization = "NONE"
+}
+
+resource "aws_api_gateway_method_response" "options_200" {
+    rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+    resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
+    http_method   = "${aws_api_gateway_method.options_method.http_method}"
+    status_code   = "200"
+    response_models {
+        "application/json" = "Empty"
+    }
+    response_parameters {
+        "method.response.header.Access-Control-Allow-Headers" = true,
+        "method.response.header.Access-Control-Allow-Methods" = true,
+        "method.response.header.Access-Control-Allow-Origin" = true
+    }
+    # depends_on = ["aws_api_gateway_method.options_method"]
+}
+resource "aws_api_gateway_integration" "options_integration" {
+    rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+    resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
+    http_method   = "${aws_api_gateway_method.options_method.http_method}"
+    type          = "MOCK"
+    request_templates = { "application/json" = "${var.integration_request_template}" }
+    depends_on = ["aws_api_gateway_method.options_method"]
+}
+resource "aws_api_gateway_integration_response" "options_integration_response" {
+    rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+    resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
+    http_method   = "${aws_api_gateway_method.options_method.http_method}"
+    status_code   = "${aws_api_gateway_method_response.options_200.status_code}"
+    response_parameters = {
+        "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+        "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    }
+    depends_on = ["aws_api_gateway_integration.options_integration"]
 }
 
 resource "aws_api_gateway_deployment" "example" {
@@ -184,101 +231,3 @@ resource "aws_route53_record" "example" {
     zone_id                = "${aws_api_gateway_domain_name.example.cloudfront_zone_id}"
   }
 }
-
-
-
-
-
-resource "aws_api_gateway_method_response" "options_200" {
-    rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-    resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
-    http_method   = "${aws_api_gateway_method.api_gateway_method.http_method}"
-    status_code   = "200"
-    response_models {
-        "application/json" = "Empty"
-    }
-    response_parameters {
-        "method.response.header.Access-Control-Allow-Headers" = true,
-        "method.response.header.Access-Control-Allow-Methods" = true,
-        "method.response.header.Access-Control-Allow-Origin" = true
-    }
-    # depends_on = ["aws_api_gateway_method.options_method"]
-}
-# resource "aws_api_gateway_integration" "options_integration" {
-#     rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#     resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#     http_method   = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#     type          = "MOCK"
-#     # depends_on = ["aws_api_gateway_method.options_method"]
-# }
-# resource "aws_api_gateway_integration_response" "options_integration_response" {
-#     rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#     resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#     http_method   = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#     status_code   = "${aws_api_gateway_method_response.options_200.status_code}"
-#     response_parameters = {
-#         "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-#         "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-#         "method.response.header.Access-Control-Allow-Origin" = "'*'"
-#     }
-#     depends_on = ["aws_api_gateway_method_response.options_200"]
-# }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# resource "aws_api_gateway_integration_response" "api_gateway_integration_response_200" {
-#   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#   resource_id = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#   http_method = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#   status_code = "${aws_api_gateway_method_response.ResourceMethod200.status_code}"
-#   # status_code = "200"
-#   response_parameters = {
-#     "method.response.header.Access-Control-Allow-Origin" = "'*'"
-#   }
-#   response_templates = { "application/json" = "${var.integration_response_template}" }
-# }
-
-
-# resource "aws_api_gateway_integration_response" "aws_api_gateway_integration_response_400" {
-#   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#   resource_id = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#   http_method = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#   status_code = "${aws_api_gateway_method_response.ResourceMethod400.status_code}"
-#   # status_code = "400"
-#   # response_templates = {
-#   #   "application/json" = "${var.integration_error_template}"
-#   # }
-#   # response_parameters = { "method.response.header.Access-Control-Allow-Origin" = "'*'" }
-# }
-
-
-# resource "aws_api_gateway_method_response" "ResourceMethod200" {
-#   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#   resource_id = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#   http_method = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#   status_code = "200"
-#   # response_models = { "application/json" = "${var.response_model}" }
-#   response_parameters = { "method.response.header.Access-Control-Allow-Origin" = "*" }
-# }
-
-
-# resource "aws_api_gateway_method_response" "ResourceMethod400" {
-#   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-#   resource_id = "${aws_api_gateway_resource.api_gateway_resource.id}"
-#   http_method = "${aws_api_gateway_method.api_gateway_method.http_method}"
-#   status_code = "400"
-#   response_models = { "application/json" = "Error" }
-#   # response_parameters = { "method.response.header.Access-Control-Allow-Origin" = "*" }
-# }
-
