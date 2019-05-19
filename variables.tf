@@ -7,7 +7,7 @@ variable "aws_region" {
 
 variable "domain_names" {
   description = "Only supports sub domain changes"
-  default = ["test.alexandermorton.co.uk"]
+  default = ["www.alexandermorton.co.uk", "alexandermorton.co.uk"]
 }
 
 variable "asset_folder" {
