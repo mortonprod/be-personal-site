@@ -11,6 +11,11 @@ jobs:
         with: 
           submodules: true
           token: ${{ secrets.GITHUB_REPO_TOKEN }}
+      - name: Install dependencies
+        working-directory: ./modules/fe-personal-site
+        run: | 
+          npm install
+          npm run build
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
         env:
