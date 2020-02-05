@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v1
         with: 
           submodules: true
-          token: ${{ secrets.GITHUB_REPO_TOKEN }
+          token: ${{ secrets.GITHUB_REPO_TOKEN }}
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
         with:
