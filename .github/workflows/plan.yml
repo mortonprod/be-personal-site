@@ -1,6 +1,10 @@
 name: 'Personal Website Push Check'
 on:
-  - push
+  push:
+    branches:
+      "master" 
+    tags-ignore:
+      - v*  
 jobs:
   terraform:
     name: 'Terraform'
