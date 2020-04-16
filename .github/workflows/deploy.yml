@@ -53,3 +53,10 @@ jobs:
         with:
           tf_actions_version: 0.11.13
           tf_actions_subcommand: 'apply'
+      - name: 'Upload new assets to s3'
+        uses: chrislennon/action-aws-cli@v1.1
+        # All commands after this point have access to the AWS CLI
+      - run: aws s3 sync ./dist s3://s3-bucket-maxwell-demon
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
