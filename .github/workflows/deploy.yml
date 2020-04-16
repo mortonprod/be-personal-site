@@ -52,4 +52,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           tf_actions_version: 0.11.13
-          tf_actions_subcommand: 'plan'
+          tf_actions_subcommand: 'apply'
