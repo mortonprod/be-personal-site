@@ -63,3 +63,9 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: aws cloudfront create-invalidation --distribution-id $PERSONAL_SITE_CF_ID --paths "/*"
+        working-directory: ./modules/fe-personal-site
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          PERSONAL_SITE_CF_ID: ${{ secrets.PERSONAL_SITE_CF_ID }}
