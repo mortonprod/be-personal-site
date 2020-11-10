@@ -95,6 +95,7 @@ resource "aws_lambda_function" "lambda" {
   role             = "${aws_iam_role.role.arn}"
   handler          = "index.handler"
   runtime          = "nodejs8.10"
+  reserved_concurrent_executions = 1
   source_code_hash = "${data.archive_file.file.output_base64sha256}"
 }
 
