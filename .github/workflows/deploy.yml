@@ -58,12 +58,12 @@ jobs:
         # All commands after this point have access to the AWS CLI
         #TODO: Need to automate getting. bucket id.
         # Also could split this into different parts since s3 upload only needed for submodule update.
-      - run: aws s3 sync --cache-control 'max-age=31536000' --exclude index.html about.html contact.html  ./dist s3://s3-bucket-maxwell-demon
+      - run: aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'max-age=31536000' --exclude index.html about.html contact.html
         working-directory: ./modules/fe-personal-site
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - run: aws s3 sync --cache-control 'no-cache' ./dist s3://s3-bucket-maxwell-demon
+      - run: aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'no-cache'
         working-directory: ./modules/fe-personal-site
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
