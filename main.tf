@@ -1,6 +1,5 @@
 terraform {
   backend "s3" {
-    # CAN SET THIS HERE ON IN MAKE FILE.
     bucket         = "wgl-site-terraform-state"
     key            = "wgl-site"
     region         = "eu-west-2"
@@ -20,25 +19,11 @@ module "cloudfrontEdge-s3-module" {
   asset_folder = "${var.asset_folder}"
 }
 
-//////// SES
-
 data "archive_file" "file" {
   type        = "zip"
   source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/lambda.zip"
 }
-
-# data "aws_iam_policy_document" "instance_role" {
-#   statement {
-#     effect  = "Allow"
-#     actions = ["sts:AssumeRole"]
-
-#     principals {
-#       type        = "Service"
-#       identifiers = ["lam"]
-#     }
-#   }
-# }
 
 resource "aws_iam_role" "role" {
   name = "sesRole"
@@ -62,7 +47,6 @@ POLICY
 
 resource "aws_iam_policy" "policy" {
   name        = "SES"
-  # path        = "/"
   description = "SES"
 
   policy = <<EOF
@@ -117,8 +101,6 @@ resource "aws_api_gateway_resource" "api_gateway_resource" {
   path_part   = "ses"
 }
 
-/// POST
-
 resource "aws_api_gateway_method" "api_gateway_method" {
   rest_api_id        = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   resource_id        = "${aws_api_gateway_resource.api_gateway_resource.id}"
@@ -136,15 +118,11 @@ resource "aws_api_gateway_integration" "api_gateway_integration" {
   resource_id             = "${aws_api_gateway_resource.api_gateway_resource.id}"
   http_method             = "${aws_api_gateway_method.api_gateway_method.http_method}"
   type                    = "AWS_PROXY"
-  # uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.aws_region}:${var.account_id}:function:${aws_lambda_function.lambda.function_name}/invocations"
   uri                     = "${aws_lambda_function.lambda.invoke_arn}"
 
   integration_http_method = "POST"
 
 }
-
-/// OPTIONS
-
 
 resource "aws_api_gateway_method" "options_method" {
     rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
@@ -166,7 +144,6 @@ resource "aws_api_gateway_method_response" "options_200" {
         "method.response.header.Access-Control-Allow-Methods" = true,
         "method.response.header.Access-Control-Allow-Origin" = true
     }
-    # depends_on = ["aws_api_gateway_method.options_method"]
 }
 resource "aws_api_gateway_integration" "options_integration" {
     rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
@@ -190,20 +167,11 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
 }
 
 resource "aws_api_gateway_deployment" "example" {
-  # See aws_api_gateway_rest_api docs for how to create this
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   stage_name  = "prod"
-  # TODO: NEED TO GET ALL THE RIGHT VARIABLES WHICH WE REDEPLOY ON CHANGE.
-  # This is needed since terraform will not redeploy after changes to resources and integrations
-  # variables = {
-  #   trigger = "${replace(base64sha256("${jsonencode(var.apigw_module_methods_to_apps_lambda)}${jsonencode(var.global_apigw_apps_ecs)}${jsonencode(var.apigw_module_apps_to_route_auth)}${jsonencode(var.apigw_module_methods_to_apps_ecs)}${jsonencode(var.apigw_module_apps_to_route_api_key_required)}${jsonencode(var.global_apigw_apps_ecs)}${jsonencode(var.global_apigw_apps_lambda)}${jsonencode(module.apigw_module.id)}${jsonencode(module.apigw_module.app_to_resource_ids)}${jsonencode(var.apigw_module_methods_to_apps_lambda)}${jsonencode(var.apigw_module_methods_to_apps_ecs)}"), "+","")}"
-  # }
 }
 
 data "aws_acm_certificate" "acm_certificate" {
-  # count = "${length(var.domain_names)}"
-  # provider = "aws.us-east-1"
-
   domain   = "${element(split(".", var.domain_names[0]),0) != "" ? replace(var.domain_names[0],"${element(split(".", var.domain_names[0]),0)}.", "") : replace(var.domain_names[0], "/(^)[.]/", "")}"
   statuses = ["ISSUED"]
 }
@@ -220,12 +188,9 @@ resource "aws_api_gateway_base_path_mapping" "test" {
 }
 
 data "aws_route53_zone" "route53_zone" {
-  # count = "${length(var.domain_names)}"
   name = "${element(split(".", var.domain_names[0]),0) != "" ? replace(var.domain_names[0],"${element(split(".", var.domain_names[0]),0)}.", "") : replace(var.domain_names[0], "/(^)[.]/", "")}"
 }
 
-# Example DNS record using Route53.
-# Route53 is not specifically required; any DNS host can be used.
 resource "aws_route53_record" "example" {
   name    = "${aws_api_gateway_domain_name.example.domain_name}"
   type    = "A"
