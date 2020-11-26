@@ -54,7 +54,7 @@ jobs:
           tf_actions_version: 0.11.13
           tf_actions_subcommand: 'apply'
       - name: 'Upload new assets to s3'
-        uses: docker://amazon/aws-cli:2.0.7
+        # uses: docker://amazon/aws-cli:2.0.7
         # All commands after this point have access to the AWS CLI
         #TODO: Need to automate getting. bucket id.
         # Also could split this into different parts since s3 upload only needed for submodule update.
