@@ -29,7 +29,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          tf_actions_version: 0.11.13
+          tf_actions_version: 0.15.5
           tf_actions_subcommand: 'init'
       - name: 'Terraform Validate'
         uses: hashicorp/terraform-github-actions@master
@@ -37,7 +37,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          tf_actions_version: 0.11.13
+          tf_actions_version: 0.15.5
           tf_actions_subcommand: 'validate'
       - name: 'Terraform Plan'
         uses: hashicorp/terraform-github-actions@master
@@ -45,5 +45,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
-          tf_actions_version: 0.11.13
+          tf_actions_version: 0.15.5
           tf_actions_subcommand: 'plan'
