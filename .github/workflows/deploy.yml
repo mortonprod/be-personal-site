@@ -57,9 +57,9 @@ jobs:
         #TODO: Need to automate getting. bucket id.
         #TODO: Consider removing this since html to longer cached and goes directly to s3.
         run: | 
-          aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'max-age=31536000' --exclude "*.html"
-          aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'no-cache'
-          aws cloudfront create-invalidation --distribution-id $PERSONAL_SITE_CF_ID --paths "/*"
+          aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'max-age=31536000' --exclude "*.html" --region us-east-1
+          aws s3 sync ./dist s3://s3-bucket-maxwell-demon --cache-control 'no-cache' --region us-east-1
+          aws cloudfront create-invalidation --distribution-id $PERSONAL_SITE_CF_ID --paths "/*" --region us-east-1
         working-directory: ./modules/fe-personal-site
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
