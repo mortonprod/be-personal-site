@@ -1,4 +1,12 @@
 terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+    }
+    archive = {
+      source  = "hashicorp/archive"
+    }
+  }
   backend "s3" {
     bucket         = "wgl-site-terraform-state"
     key            = "wgl-site"
