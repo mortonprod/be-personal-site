@@ -139,7 +139,7 @@ resource "aws_api_gateway_method_response" "options_200" {
     response_models = {
         "application/json" = "Empty"
     }
-    response_parameters {
+    response_parameters = {
         "method.response.header.Access-Control-Allow-Headers" = true,
         "method.response.header.Access-Control-Allow-Methods" = true,
         "method.response.header.Access-Control-Allow-Origin" = true
