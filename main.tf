@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 module "cloudfrontEdge-s3-module" {
-  source       = "modules/cloudfrontEdge-s3-module"
+  source       = "./modules/cloudfrontEdge-s3-module"
   name         = "${var.name}"
   aws_region   = "${var.aws_region}"
   domain_names = "${var.domain_names}"
