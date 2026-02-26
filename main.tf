@@ -136,7 +136,7 @@ resource "aws_api_gateway_method_response" "options_200" {
     resource_id   = "${aws_api_gateway_resource.api_gateway_resource.id}"
     http_method   = "${aws_api_gateway_method.options_method.http_method}"
     status_code   = "200"
-    response_models {
+    response_models = {
         "application/json" = "Empty"
     }
     response_parameters {
