@@ -1,66 +1,62 @@
-var AWS = require('aws-sdk');
-var ses = new AWS.SES();
- 
-var RECEIVER = 'alex@alexandermorton.co.uk';
-var SENDER = 'alex@alexandermorton.co.uk';
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 
-var response = {
- "isBase64Encoded": false,
- "headers": { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'alexandermorton.co.uk'},
- "statusCode": 200,
- "body": "{\"result\": \"Success.\"}"
- };
+const client = new SESClient({});
 
-exports.handler = function (event, context,callback) {
-    console.log('Received event:', event);
-    sendEmail(JSON.parse(event.body), function (err, data) {
-      console.error(`Error: ${JSON.stringify(err)}`);
-      if(err) {
-        const response = {
-          statusCode: 400,
-          headers: {
-            "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-            "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
-          },
-          body: JSON.stringify({ "message": "Sent" })
-        };
-    
-        callback(null, response);
-      }
-        // context.done(err, null);
-        const response = {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-            "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
-          },
-          body: JSON.stringify({ "message": "Sent" })
-        };
-    
-        callback(null, response);
-    });
-};
- 
-function sendEmail (event, done) {
-    var params = {
-        Destination: {
-            ToAddresses: [
-                RECEIVER
-            ]
-        },
-        Message: {
-            Body: {
-                Text: {
-                    Data: 'name: ' + event.name + '\nemail: ' + event.email + '\nnote: ' + event.note,
-                    Charset: 'UTF-8'
-                }
-            },
-            Subject: {
-                Data: 'Website Referral Form: ' + event.name,
-                Charset: 'UTF-8'
-            }
-        },
-        Source: SENDER
+const RECEIVER = 'alex@alexandermorton.co.uk';
+const SENDER = 'alex@alexandermorton.co.uk';
+
+exports.handler = async function (event) {
+  console.log('Received event:', event);
+
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch (e) {
+    return {
+      statusCode: 400,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ message: 'Invalid request body' })
     };
-    ses.sendEmail(params, done);
-}
+  }
+
+  if (!body.name || !body.email || !body.note) {
+    return {
+      statusCode: 400,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ message: 'Missing required fields' })
+    };
+  }
+
+  const params = {
+    Destination: { ToAddresses: [RECEIVER] },
+    Message: {
+      Body: {
+        Text: {
+          Data: `name: ${body.name}\nemail: ${body.email}\nnote: ${body.note}`,
+          Charset: 'UTF-8'
+        }
+      },
+      Subject: {
+        Data: `Website Referral Form: ${body.name}`,
+        Charset: 'UTF-8'
+      }
+    },
+    Source: SENDER
+  };
+
+  try {
+    await client.send(new SendEmailCommand(params));
+    return {
+      statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ message: 'Sent' })
+    };
+  } catch (err) {
+    console.error('SES error:', err);
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ message: 'Failed to send email' })
+    };
+  }
+};

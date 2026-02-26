@@ -78,7 +78,7 @@ resource "aws_lambda_function" "lambda" {
   function_name    = "ses"
   role             = "${aws_iam_role.role.arn}"
   handler          = "index.handler"
-  runtime          = "nodejs12.x"
+  runtime          = "nodejs20.x"
   reserved_concurrent_executions = 1
   source_code_hash = "${data.archive_file.file.output_base64sha256}"
 }
@@ -151,7 +151,7 @@ resource "aws_api_gateway_integration" "options_integration" {
     http_method   = "${aws_api_gateway_method.options_method.http_method}"
     type          = "MOCK"
     request_templates = { "application/json" = "${var.integration_request_template}" }
-    depends_on = ["aws_api_gateway_method.options_method"]
+    depends_on = [aws_api_gateway_method.options_method]
 }
 resource "aws_api_gateway_integration_response" "options_integration_response" {
     rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
@@ -163,7 +163,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
         "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
         "method.response.header.Access-Control-Allow-Origin" = "'*'"
     }
-    depends_on = ["aws_api_gateway_integration.options_integration"]
+    depends_on = [aws_api_gateway_integration.options_integration]
 }
 
 resource "aws_api_gateway_deployment" "example" {
