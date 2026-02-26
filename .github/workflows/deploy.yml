@@ -25,22 +25,25 @@ jobs:
       - run: npm run build
         working-directory: ./modules/fe-personal-site
 
+      - name: 'Setup Terraform 0.13 for state migration'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '0.13.7'
+
+      - name: 'Migrate v3 state to v4 with Terraform 0.13'
+        run: |
+          terraform init -input=false
+          terraform state replace-provider -auto-approve "registry.terraform.io/-/aws" "registry.terraform.io/hashicorp/aws" || true
+          terraform state replace-provider -auto-approve "registry.terraform.io/-/archive" "registry.terraform.io/hashicorp/archive" || true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        continue-on-error: true
+
       - name: 'Setup Terraform'
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: '1.9.8'
-
-      - name: 'Fix legacy provider addresses in state'
-        run: |
-          aws s3 cp s3://wgl-site-terraform-state/wgl-site /tmp/terraform.tfstate --region eu-west-2 2>/dev/null || true
-          if [ -f /tmp/terraform.tfstate ]; then
-            sed -i 's|registry.terraform.io/-/aws|registry.terraform.io/hashicorp/aws|g' /tmp/terraform.tfstate
-            sed -i 's|registry.terraform.io/-/archive|registry.terraform.io/hashicorp/archive|g' /tmp/terraform.tfstate
-            aws s3 cp /tmp/terraform.tfstate s3://wgl-site-terraform-state/wgl-site --region eu-west-2
-          fi
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: 'Terraform Init'
         run: terraform init
