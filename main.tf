@@ -176,7 +176,12 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
 
 resource "aws_api_gateway_deployment" "example" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-  stage_name  = "prod"
+}
+
+resource "aws_api_gateway_stage" "example" {
+  rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+  deployment_id = "${aws_api_gateway_deployment.example.id}"
+  stage_name    = "prod"
 }
 
 data "aws_acm_certificate" "acm_certificate" {
@@ -191,7 +196,7 @@ resource "aws_api_gateway_domain_name" "example" {
 
 resource "aws_api_gateway_base_path_mapping" "test" {
   api_id      = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
-  stage_name  = "${aws_api_gateway_deployment.example.stage_name}"
+  stage_name  = "${aws_api_gateway_stage.example.stage_name}"
   domain_name = "${aws_api_gateway_domain_name.example.domain_name}"
 }
 
