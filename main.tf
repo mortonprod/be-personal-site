@@ -169,7 +169,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
     response_parameters = {
         "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
         "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-        "method.response.header.Access-Control-Allow-Origin" = "'*'"
+        "method.response.header.Access-Control-Allow-Origin" = "'https://alexandermorton.co.uk'"
     }
     depends_on = [aws_api_gateway_integration.options_integration]
 }
@@ -198,6 +198,17 @@ resource "aws_api_gateway_stage" "example" {
   rest_api_id   = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
   deployment_id = "${aws_api_gateway_deployment.example.id}"
   stage_name    = "prod"
+}
+
+resource "aws_api_gateway_method_settings" "throttle" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway_rest_api.id
+  stage_name  = aws_api_gateway_stage.example.stage_name
+  method_path = "*/*"
+
+  settings {
+    throttling_rate_limit  = 1
+    throttling_burst_limit = 5
+  }
 }
 
 data "aws_acm_certificate" "acm_certificate" {
