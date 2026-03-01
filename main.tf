@@ -176,6 +176,22 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
 
 resource "aws_api_gateway_deployment" "example" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gateway_rest_api.id}"
+
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.api_gateway_resource.id,
+      aws_api_gateway_method.api_gateway_method.id,
+      aws_api_gateway_integration.api_gateway_integration.id,
+      aws_api_gateway_method.options_method.id,
+      aws_api_gateway_method_response.options_200.id,
+      aws_api_gateway_integration.options_integration.id,
+      aws_api_gateway_integration_response.options_integration_response.id,
+    ]))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_stage" "example" {
