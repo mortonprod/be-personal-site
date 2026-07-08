@@ -169,7 +169,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
     response_parameters = {
         "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
         "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-        "method.response.header.Access-Control-Allow-Origin" = "'https://alexandermorton.co.uk'"
+        "method.response.header.Access-Control-Allow-Origin" = "'https://archive.alexandermorton.co.uk'"
     }
     depends_on = [aws_api_gateway_integration.options_integration]
 }
@@ -186,6 +186,7 @@ resource "aws_api_gateway_deployment" "example" {
       aws_api_gateway_method_response.options_200.id,
       aws_api_gateway_integration.options_integration.id,
       aws_api_gateway_integration_response.options_integration_response.id,
+      jsonencode(aws_api_gateway_integration_response.options_integration_response.response_parameters),
     ]))
   }
 

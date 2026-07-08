@@ -6,8 +6,7 @@ const RECEIVER = 'alex@alexandermorton.co.uk';
 const SENDER = 'alex@alexandermorton.co.uk';
 
 const ALLOWED_ORIGINS = [
-  'https://alexandermorton.co.uk',
-  'https://www.alexandermorton.co.uk'
+  'https://archive.alexandermorton.co.uk'
 ];
 
 const EMAIL_REGEX = /^[\w\-.]+@([\w-]+\.)+[\w-]{2,6}$/;

@@ -1,6 +1,6 @@
 # be-personal-site
 
-Infrastructure and CI/CD for [alexandermorton.co.uk](https://alexandermorton.co.uk).
+Infrastructure and CI/CD for [archive.alexandermorton.co.uk](https://archive.alexandermorton.co.uk) — the archived personal site. The apex domain [alexandermorton.co.uk](https://alexandermorton.co.uk) is now served by the Ghost blog (`ghost-blog` repo).
 
 Deploys the frontend static assets (via git submodule) to S3, serves them through CloudFront with Lambda@Edge, and exposes a contact-form API via API Gateway + SES Lambda.
 
